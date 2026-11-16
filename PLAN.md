@@ -7,7 +7,7 @@ Alcance: **solo lo que pide el enunciado**. Nada de login, roles, edición de pr
 
 | Persona | Integrante | Funcionalidades | Puntos |
 |---|---|---|---|
-| A | _(nombre)_ | F1 Carga, F5 Consulta, Interfaz | 10 + 15 + 5 |
+| A | _Daniel_ | F1 Carga, F5 Consulta, Interfaz | 10 + 15 + 5 |
 | B | _Elias_ | F2 Activar, F3 Promociones activas | 15 + 15 |
 | C | _(nombre)_ | F4 Obtener cupón, infraestructura | 20 |
 
