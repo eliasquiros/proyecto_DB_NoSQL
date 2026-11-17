@@ -9,7 +9,7 @@ Alcance: **solo lo que pide el enunciado**. Nada de login, roles, edición de pr
 |---|---|---|---|
 | A | _Daniel_ | F1 Carga, F5 Consulta, Interfaz | 10 + 15 + 5 |
 | B | _Elias_ | F2 Activar, F3 Promociones activas | 15 + 15 |
-| C | _(nombre)_ | F4 Obtener cupón, infraestructura | 20 |
+| C | _Kiara_ | F4 Obtener cupón, infraestructura | 20 |
 
 ---
 
