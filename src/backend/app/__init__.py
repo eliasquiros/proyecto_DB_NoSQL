@@ -30,6 +30,9 @@ def _registrar_blueprints(app: Flask) -> None:
     app.register_blueprint(activar_bp)
     app.register_blueprint(activas_bp)
 
+    # Persona C: F4 obtener cupón
+    from .cupones import cupones_bp
+    app.register_blueprint(cupones_bp)
 
 def _registrar_ruta_raiz(app: Flask) -> None:
     @app.get("/")

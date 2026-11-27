@@ -1,0 +1,91 @@
+
+{% extends "base.html" %}
+
+{% block titulo %}Obtener cupón{% endblock %}
+
+{% block encabezado %}Obtener cupón{% endblock %}
+
+{% block subtitulo %}
+Selecciona una promoción activa e ingresa el nombre del cliente para obtener su cupón.
+{% endblock %}
+
+{% block contenido %}
+
+<h2 class="seccion-titulo">Solicitud de cupón</h2>
+
+{% if promociones %}
+
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card p-4">
+
+      <form method="POST" action="{{ url_for('cupones.obtener_cupon') }}">
+
+        <div class="mb-4">
+          <label for="cliente" class="form-label">
+            Nombre del cliente
+          </label>
+
+          <input
+            type="text"
+            class="form-control"
+            id="cliente"
+            name="cliente"
+            placeholder="Ingrese el nombre del cliente"
+            required
+          >
+        </div>
+
+        <div class="mb-4">
+          <label for="promocion_id" class="form-label">
+            Promoción disponible
+          </label>
+
+          <select
+            class="form-select"
+            id="promocion_id"
+            name="promocion_id"
+            required
+          >
+            <option value="" selected disabled>
+              Seleccione una promoción
+            </option>
+
+            {% for promocion in promociones %}
+              <option value="{{ promocion.id }}">
+                {{ promocion.nombre }} — {{ promocion.departamento }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-marca w-100">
+          Obtener cupón
+        </button>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+
+{% else %}
+
+<div class="card vacio p-5 text-center">
+  <p class="mb-1 fw-semibold">No hay promociones disponibles</p>
+
+  <p class="text-secondary mb-3">
+    Actualmente no existen promociones activas con cupones disponibles.
+  </p>
+
+  <div>
+    <a href="{{ url_for('activar_bp.mostrar_formulario') }}"
+       class="btn btn-marca">
+      Activar promoción
+    </a>
+  </div>
+</div>
+
+{% endif %}
+
+{% endblock %}

@@ -9,6 +9,7 @@ mongo_client = MongoClient(
 )
 mongo_db = mongo_client[config.mongo_db_name]
 col_promociones = mongo_db["promociones"]
+col_cupones = mongo_db["cupones"]
 
 redis_client = redis.Redis(
     host=config.redis_host,
