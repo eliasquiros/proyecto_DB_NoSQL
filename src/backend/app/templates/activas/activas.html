@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block titulo %}Promociones activas{% endblock %}
+{% block encabezado %}Promociones activas{% endblock %}
+{% block subtitulo %}Consultá las promociones vigentes en este momento, sus cupones disponibles y el tiempo que les resta.{% endblock %}
+
+{% block contenido %}
+{% set total_cupones = promociones | sum(attribute='cupones_disponibles') %}
+
+<div class="row g-3 mb-4 align-items-stretch">
+  <div class="col-6 col-md-4">
+    <div class="card metrica p-4 h-100">
+      <span class="metrica-etiqueta">Promociones vigentes</span>
+      <span class="metrica-valor" data-contar>{{ promociones | length }}</span>
+    </div>
+  </div>
+  <div class="col-6 col-md-4">
+    <div class="card metrica p-4 h-100">
+      <span class="metrica-etiqueta">Cupones disponibles</span>
+      <span class="metrica-valor" data-contar>{{ total_cupones }}</span>
+    </div>
+  </div>
+  <div class="col-12 col-md-4">
+    <div class="card p-4 h-100 d-flex flex-column justify-content-center gap-2">
+      <a href="{{ url_for('activas_bp.listar_promociones_activas') }}" class="btn btn-marca w-100">Actualizar</a>
+      <a href="{{ url_for('activar_bp.mostrar_formulario') }}" class="btn btn-borde w-100">Activar promoción</a>
+    </div>
+  </div>
+</div>
+
+<h2 class="seccion-titulo">Vigentes ahora</h2>
+
+{% if promociones %}
+  <div class="table-responsive">
+    <table class="table tabla-marca">
+      <thead>
+        <tr>
+          <th>Promoción</th>
+          <th>Departamento</th>
+          <th>Cupones disponibles</th>
+          <th>Tiempo restante</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for promo in promociones %}
+          <tr>
+            <td class="fw-medium">{{ promo.nombre }}</td>
+            <td>{{ promo.departamento }}</td>
+            <td class="numero">{{ promo.cupones_disponibles }}</td>
+            <td><span class="etiqueta">{{ promo.tiempo_restante_texto }}</span></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="card vacio p-5 text-center">
+    <p class="mb-1 fw-semibold">No hay promociones activas</p>
+    <p class="text-secondary mb-3">Activá una promoción del catálogo para que aparezca disponible aquí.</p>
+    <div>
+      <a href="{{ url_for('activar_bp.mostrar_formulario') }}" class="btn btn-marca">Activar promoción</a>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}
