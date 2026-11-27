@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block titulo %}Carga inicial{% endblock %}
+{% block encabezado %}Carga inicial de datos{% endblock %}
+{% block subtitulo %}Seleccioná el archivo JSON con el catálogo de promociones para cargarlo en MongoDB.{% endblock %}
+
+{% block contenido %}
+<div class="row g-4 mb-5">
+  <div class="col-lg-7">
+    <div class="card p-4 h-100">
+      <form method="post" enctype="multipart/form-data">
+        <label class="zona-archivo mb-3" id="zona">
+          <input type="file" name="archivo" id="archivo" accept=".json,application/json">
+          <span class="zona-titulo">Arrastrá el archivo aquí o hacé clic para elegirlo</span>
+          <span class="zona-nombre" id="nombre-archivo">Formato aceptado: .json</span>
+        </label>
+        <button class="btn btn-marca" type="submit">Cargar catálogo</button>
+      </form>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="row g-3 h-100">
+      <div class="col-6">
+        <div class="card metrica p-4 h-100">
+          <span class="metrica-etiqueta">Promociones en catálogo</span>
+          <span class="metrica-valor" data-contar>{{ total }}</span>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="card metrica p-4 h-100">
+          <span class="metrica-etiqueta">Departamentos</span>
+          <span class="metrica-valor" data-contar>{{ total_departamentos }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2 class="seccion-titulo">Catálogo de promociones</h2>
+
+{% if filas %}
+  <div class="table-responsive">
+    <table class="table tabla-marca">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Promoción</th>
+          <th>Departamento</th>
+          <th>Descuento</th>
+          <th>Atributos del departamento</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for f in filas %}
+          <tr>
+            <td><span class="etiqueta">{{ f.id }}</span></td>
+            <td>{{ f.nombre }}</td>
+            <td>{{ f.departamento }}</td>
+            <td class="numero">{{ f.descuento }}</td>
+            <td>
+              {% for etiqueta, valor in f.otros %}
+                <span class="atributo"><b>{{ etiqueta }}:</b> {{ valor }}</span>
+              {% else %}
+                <span class="text-secondary">—</span>
+              {% endfor %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="card vacio p-5 text-center">
+    <p class="mb-1 fw-semibold">El catálogo está vacío</p>
+    <p class="text-secondary m-0">Cargá un archivo JSON para ver aquí las promociones.</p>
+  </div>
+{% endif %}
+
+<script>
+  (function () {
+    var zona = document.getElementById('zona');
+    var input = document.getElementById('archivo');
+    var nombre = document.getElementById('nombre-archivo');
+    input.addEventListener('change', function () {
+      if (input.files.length) {
+        nombre.textContent = input.files[0].name;
+        zona.classList.add('con-archivo');
+      }
+    });
+    ['dragenter', 'dragover'].forEach(function (ev) {
+      zona.addEventListener(ev, function () { zona.classList.add('arrastrando'); });
+    });
+    ['dragleave', 'drop'].forEach(function (ev) {
+      zona.addEventListener(ev, function () { zona.classList.remove('arrastrando'); });
+    });
+  })();
+</script>
+{% endblock %}

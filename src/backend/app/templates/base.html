@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Inicio{% endblock %} · Promociones y Cupones</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
+  <script>try{if(sessionStorage.getItem("desdeTarjeta")){document.documentElement.classList.add("sin-entrada");sessionStorage.removeItem("desdeTarjeta");}}catch(e){}</script>
+  <script>try{if(sessionStorage.getItem("volverDe")){document.documentElement.classList.add("volviendo");}}catch(e){}</script>
+</head>
+<body class="{% block body_clase %}oscuro interior{% endblock %}">
+  {% block fondo %}{% endblock %}
+
+  {% set opciones = [
+    ('/carga',    'Carga inicial'),
+    ('/activar',  'Activar'),
+    ('/activas',  'Activas'),
+    ('/cupon',    'Obtener cupón'),
+    ('/consulta', 'Consulta')
+  ] %}
+
+  <nav class="navbar navbar-expand-lg barra" id="barra">
+    <div class="container">
+      <a class="marca" href="/">
+        <span class="marca-sello">P</span>
+        <span class="marca-separador"></span>
+        <span class="marca-nombre">Promociones <em>&amp;</em> Cupones
+          <span class="marca-sub">Tienda por departamentos</span>
+        </span>
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#menu" aria-label="Abrir menú">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="menu">
+        <ul class="navbar-nav ms-auto menu" id="menu-lista">
+          {% for ruta, texto in opciones %}
+            <li class="nav-item">
+              <a class="nav-link {{ 'active' if request.path.startswith(ruta) }}" href="{{ ruta }}">{{ texto }}</a>
+            </li>
+          {% endfor %}
+          <span class="indicador" id="indicador"></span>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container" style="view-transition-name: hoja-{{ request.path.strip("/").split("/")[0] or "inicio" }}">
+    <a href="/" class="cerrar-hoja" aria-label="Volver al panel"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Cerrar</a>
+    {% if self.encabezado() | trim %}
+      <div class="encabezado">
+        <h1>{% block encabezado %}{% endblock %}</h1>
+        {% if self.subtitulo() | trim %}<p>{% block subtitulo %}{% endblock %}</p>{% endif %}
+      </div>
+    {% endif %}
+
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+      {% for categoria, mensaje in mensajes %}
+        <div class="alert alert-{{ 'danger' if categoria == 'error' else categoria }} alert-dismissible fade show" role="alert">
+          {{ mensaje }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+      {% endfor %}
+    {% endwith %}
+
+    {% block contenido %}{% endblock %}
+  </main>
+
+  <footer class="pie text-center py-4 mt-5">
+    TI4601 Bases de datos avanzadas · II semestre 2026
+  </footer>
+
+  <script src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
+  <script>
+  (function () {
+    var barra = document.getElementById('barra');
+    var lista = document.getElementById('menu-lista');
+    var indicador = document.getElementById('indicador');
+    var activo = lista.querySelector('.nav-link.active');
+    var reducir = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Barra compacta al bajar
+    function revisarScroll() { barra.classList.toggle('compacta', window.scrollY > 10); }
+    window.addEventListener('scroll', revisarScroll, { passive: true });
+    revisarScroll();
+
+    // Línea ocre que sigue al mouse y vuelve a la página actual
+    function moverA(enlace) {
+      if (!enlace) { indicador.style.opacity = 0; return; }
+      var a = enlace.getBoundingClientRect(), l = lista.getBoundingClientRect();
+      indicador.style.left = (a.left - l.left + 15) + 'px';
+      indicador.style.width = (a.width - 30) + 'px';
+      indicador.style.opacity = 1;
+    }
+    lista.querySelectorAll('.nav-link').forEach(function (e) {
+      e.addEventListener('mouseenter', function () { moverA(e); });
+    });
+    lista.addEventListener('mouseleave', function () { moverA(activo); });
+    window.addEventListener('resize', function () { moverA(activo); });
+    window.addEventListener('load', function () { moverA(activo); });
+
+    // Números que cuentan desde 0 (usar: <td class="numero" data-contar>12</td>)
+    document.querySelectorAll('[data-contar]').forEach(function (el) {
+      var fin = parseInt(el.textContent, 10);
+      if (isNaN(fin) || reducir) return;
+      var inicio = null, dur = 900;
+      el.textContent = '0';
+      function paso(t) {
+        if (!inicio) inicio = t;
+        var p = Math.min((t - inicio) / dur, 1);
+        el.textContent = Math.round(fin * (1 - Math.pow(1 - p, 3)));
+        if (p < 1) requestAnimationFrame(paso);
+      }
+      setTimeout(function () { requestAnimationFrame(paso); }, 250);
+    });
+  })();
+  </script>
+  <script src="{{ url_for("static", filename="transicion.js") }}"></script>
+</body>
+</html>

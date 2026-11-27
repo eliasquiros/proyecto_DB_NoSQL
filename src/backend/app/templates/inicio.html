@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block titulo %}Inicio{% endblock %}
+{% block body_clase %}oscuro{% endblock %}
+
+{% block fondo %}
+<div class="fondo-azul" aria-hidden="true">
+  <span class="orbe" style="width:520px;height:520px;top:-8%;left:6%;  background:radial-gradient(circle,#4f86d9 0%,transparent 70%); --op:.45; --blur:50px; --dur:48s; --dx:90px;  --dy:220px;  --retraso:-10s"></span>
+  <span class="orbe" style="width:420px;height:420px;top:48%;left:62%; background:radial-gradient(circle,#3f8fb0 0%,transparent 70%); --op:.38; --blur:55px; --dur:56s; --dx:-120px; --dy:-260px; --retraso:-25s"></span>
+  <span class="orbe" style="width:340px;height:340px;top:62%;left:12%; background:radial-gradient(circle,#6a73c4 0%,transparent 70%); --op:.32; --blur:45px; --dur:62s; --dx:140px;  --dy:-200px; --retraso:-5s"></span>
+  <span class="orbe" style="width:280px;height:280px;top:12%;left:72%; background:radial-gradient(circle,#a9c4ec 0%,transparent 70%); --op:.22; --blur:40px; --dur:44s; --dx:-80px;  --dy:180px;  --retraso:-18s"></span>
+  <span class="orbe" style="width:240px;height:240px;top:35%;left:40%; background:radial-gradient(circle,#d9a55a 0%,transparent 70%); --op:.14; --blur:50px; --dur:70s; --dx:60px;   --dy:-140px; --retraso:-30s"></span>
+</div>
+{% endblock %}
+
+{% block contenido %}
+{% set tarjetas = [
+  ('/carga',    'Carga inicial',       'Catálogo de promociones',     'MongoDB',         'Archivo JSON · Colección promociones',       '#f4f1e8'),
+  ('/activar',  'Activar promoción',   'Cupones y duración',          'Redis',           'Cupones disponibles · Tiempo de vida (TTL)', '#eef0ea'),
+  ('/activas',  'Promociones activas', 'Vigentes en este momento',    'Redis',           'Cupones restantes · Tiempo para vencer',     '#f2efe6'),
+  ('/cupon',    'Obtener cupón',       'Entrega al cliente',          'MongoDB + Redis', 'Código único · Un cupón por cliente',        '#ecebe5'),
+  ('/consulta', 'Consulta de cupones', 'Resultados por departamento', 'MongoDB',         'Total de cupones · Clientes distintos',      '#f5f2ea')
+] %}
+
+<section class="portada">
+  <div class="portada-cabecera">
+    <div class="animar" style="--i: 0">
+      <span class="portada-etiqueta"><span class="punto"></span>Tienda por departamentos</span>
+    </div>
+    <h1 class="titulo-serif">
+      <span class="sticker-serif" style="--d: .15s"><span>Promociones</span></span>
+      <span class="sticker-serif chico" style="--d: .4s"><span>y cupones</span></span>
+    </h1>
+    <p class="portada-sub animar" style="--i: 4">
+      Activá promociones por tiempo limitado, entregá cupones y consultá los resultados por departamento.
+    </p>
+  </div>
+
+  <div class="row g-4 justify-content-center">
+    {% for ruta, nombre, cargo, base, pie, papel in tarjetas %}
+      <div class="col-md-6 col-lg-4 animar" style="--i: {{ loop.index0 + 5 }}">
+        <a href="{{ ruta }}" class="tp-enlace">
+          <div class="tarjeta-presentacion" style="--papel-tarjeta: {{ papel }}; view-transition-name: hoja-{{ ruta[1:] }}">
+            <div class="tp-arriba">
+              <span class="tp-numero">Nº {{ '%02d' % loop.index }}</span>
+              <span class="tp-empresa">Promociones y Cupones<small>{{ base }}</small></span>
+            </div>
+            <div class="tp-centro">
+              <p class="tp-nombre">{{ nombre }}</p>
+              <p class="tp-cargo">{{ cargo }}</p>
+            </div>
+            <div class="tp-pie">{{ pie }}</div>
+          </div>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<script>
+  // Inclinación 3D suave de las tarjetas siguiendo el mouse
+  (function () {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    document.querySelectorAll('.tp-enlace').forEach(function (enlace) {
+      var t = enlace.querySelector('.tarjeta-presentacion');
+      enlace.addEventListener('mousemove', function (e) {
+        var r = enlace.getBoundingClientRect();
+        var x = (e.clientX - r.left) / r.width - .5;
+        var y = (e.clientY - r.top) / r.height - .5;
+        t.style.transform = 'rotateY(' + (x * 6) + 'deg) rotateX(' + (-y * 6) + 'deg) translateY(-3px)';
+      });
+      enlace.addEventListener('mouseleave', function () { t.style.transform = ''; });
+    });
+  })();
+</script>
+{% endblock %}
