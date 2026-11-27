@@ -23,14 +23,12 @@ def _registrar_blueprints(app: Flask) -> None:
     app.register_blueprint(carga_bp)
     app.register_blueprint(reportes_bp)
 
-    # Persona B: F2 activar (temporal: se omite si activar.py aún no está en el repo)
-    try:
-        from .activar import activar_bp
-    except ModuleNotFoundError as err:
-        if err.name != f"{__name__}.activar":
-            raise
-    else:
-        app.register_blueprint(activar_bp)
+    # Persona B: F2 activar y F3 promociones activas
+    from .activar import activar_bp
+    from .activas import activas_bp
+
+    app.register_blueprint(activar_bp)
+    app.register_blueprint(activas_bp)
 
 
 def _registrar_ruta_raiz(app: Flask) -> None:
