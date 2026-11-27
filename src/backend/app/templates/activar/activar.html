@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block titulo %}Activar promoción{% endblock %}
+{% block encabezado %}Activar promoción{% endblock %}
+{% block subtitulo %}Elegí una promoción del catálogo e indicá cuántos cupones habilitar y por cuántos minutos estará vigente.{% endblock %}
+
+{% block contenido %}
+{% set total_departamentos = promociones | map(attribute='departamento') | select | unique | list | length %}
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card p-4 h-100">
+      {% if promociones %}
+        <form method="post" action="{{ url_for('activar_bp.procesar_activacion') }}" novalidate>
+          <div class="mb-3">
+            <label for="promocion_id" class="form-label">Promoción</label>
+            <select class="form-select" id="promocion_id" name="promocion_id">
+              <option value="">— Seleccioná una promoción —</option>
+              {% for promo in promociones %}
+                {% set pid = promo.get('id', promo.get('_id')) %}
+                <option value="{{ pid }}">
+                  {{ promo.get('nombre', 'Sin nombre') }} — {{ promo.get('departamento', 'General') }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="row g-3 mb-4">
+            <div class="col-sm-6">
+              <label for="cupones" class="form-label">Cantidad de cupones</label>
+              <input
+                type="number"
+                class="form-control"
+                id="cupones"
+                name="cupones"
+                placeholder="Ej. 25"
+              >
+            </div>
+            <div class="col-sm-6">
+              <label for="duracion" class="form-label">Vigencia (en minutos)</label>
+              <input
+                type="number"
+                class="form-control"
+                id="duracion"
+                name="duracion"
+                placeholder="Ej. 15"
+              >
+            </div>
+          </div>
+
+          <div class="d-flex flex-wrap gap-2">
+            <button type="submit" class="btn btn-marca">Activar promoción</button>
+            <a href="/activas" class="btn btn-borde">Ver promociones activas</a>
+          </div>
+        </form>
+      {% else %}
+        <div class="vacio p-4 text-center rounded">
+          <p class="mb-1 fw-semibold">Todavía no hay promociones en el catálogo</p>
+          <p class="text-secondary mb-3">Cargá primero el catálogo de la tienda para poder habilitar promociones.</p>
+          <a href="/carga" class="btn btn-marca">Ir a carga inicial</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="row g-3 h-100">
+      <div class="col-6">
+        <div class="card metrica p-4 h-100">
+          <span class="metrica-etiqueta">En catálogo</span>
+          <span class="metrica-valor" data-contar>{{ promociones | length }}</span>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="card metrica p-4 h-100">
+          <span class="metrica-etiqueta">Departamentos</span>
+          <span class="metrica-valor" data-contar>{{ total_departamentos }}</span>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="card p-4">
+          <span class="seccion-titulo mb-2">Condiciones de vigencia</span>
+          <p class="text-secondary small mb-0">
+            Una vez activada, la promoción estará disponible para los clientes hasta que se agoten sus cupones o finalice el tiempo indicado. No es posible activar dos veces la misma promoción mientras siga vigente con cupones disponibles.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
