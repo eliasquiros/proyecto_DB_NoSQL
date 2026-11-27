@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for
+from flask import Flask, render_template
 
 from .config import config
 
@@ -16,12 +16,24 @@ def _configurar_app(app: Flask) -> None:
 
 
 def _registrar_blueprints(app: Flask) -> None:
-    from .activar import activar_bp
+    # Persona A: F1 carga inicial y F5 consulta de cupones
+    from .carga import bp as carga_bp
+    from .reportes import bp as reportes_bp
 
-    app.register_blueprint(activar_bp)
+    app.register_blueprint(carga_bp)
+    app.register_blueprint(reportes_bp)
+
+    # Persona B: F2 activar (temporal: se omite si activar.py aún no está en el repo)
+    try:
+        from .activar import activar_bp
+    except ModuleNotFoundError as err:
+        if err.name != f"{__name__}.activar":
+            raise
+    else:
+        app.register_blueprint(activar_bp)
 
 
 def _registrar_ruta_raiz(app: Flask) -> None:
     @app.get("/")
     def index():
-        return redirect(url_for("activar_bp.mostrar_formulario"))
+        return render_template("inicio.html")
